@@ -4,6 +4,7 @@ from typing import Any
 from rest_framework import serializers
 from django.contrib.auth.hashers import check_password
 
+
 class RegisterSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(write_only=True)
     class Meta:
@@ -51,3 +52,9 @@ class LoginSerializer(serializers.Serializer):
 
         attrs['user'] = user
         return attrs
+
+
+class DeleteProfileSerializer(serializers.Serializer):
+    def validate(self, attrs: dict[str, Any]) -> None:
+        request_user_id = attrs.get('user_id')
+        request_password = attrs.get('password')

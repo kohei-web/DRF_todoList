@@ -11,3 +11,7 @@ from django.test import TestCase
     "user_id": "kohei",
     "password": "password"
 }
+
+{
+    "user_id": "kohei"
+}
