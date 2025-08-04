@@ -43,3 +43,6 @@ class TodoCreateView(APIView):
                     status=HTTP_500_INTERNAL_SERVER_ERROR
                 )
         return Response(serializers.errors, status=HTTP_400_BAD_REQUEST)
+
+
+# class TodoUpdateView(APIView):
