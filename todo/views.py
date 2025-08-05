@@ -1,5 +1,5 @@
 from .models import TodoList
-from .serializers import AddTodoListSerializer
+from .serializers import AddTodoListSerializer, UpdateTodoListSerializer
 
 from django.db import IntegrityError, DataError
 
@@ -45,4 +45,14 @@ class TodoCreateView(APIView):
         return Response(serializers.errors, status=HTTP_400_BAD_REQUEST)
 
 
-# class TodoUpdateView(APIView):
+class TodoUpdateView(APIView):
+    def patch(self, request, pk):
+        try:
+            todo = TodoList.objects.get(pk=pk, user=request.user)
+        except TodoList.DoesNotExist:
+            return Response(
+                {'error': '指定されたTodoが存在しません'},
+                status=HTTP_404_NOT_FOUND
+            )
+
+        serializer = UpdateTodoListSerializer(todo, )
