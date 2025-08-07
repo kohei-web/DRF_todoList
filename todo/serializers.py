@@ -28,3 +28,9 @@ class UpdateTodoListSerializer(serializers.ModelSerializer):
     class Meta:
         model = TodoList
         fields = {'title', 'text'}
+
+
+class GetTodoListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TodoList
+        fields = ['id', 'title', 'text']
