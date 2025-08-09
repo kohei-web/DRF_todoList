@@ -1,5 +1,5 @@
 from .models import TodoList
-from .serializers import AddTodoListSerializer, UpdateTodoListSerializer, GetTodoListSerializer
+from .serializers import AddTodoListSerializer, UpdateTodoListSerializer, GetTodoSerializer
 
 from django.db import IntegrityError, DataError
 
@@ -63,10 +63,11 @@ class TodoUpdateView(APIView):
             return Response(serializer.data, status=HTTP_200_OK)
         return Response(serializer.errors, status=HTTP_400_BAD_REQUEST)
 
+# todo一件取得
 class TodoGetView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, pk):
+    def get(self, request, pk):
         try:
             todo = TodoList.objects.get(pk=pk)
         except TodoList.DoesNotExist:
@@ -74,9 +75,28 @@ class TodoGetView(APIView):
                 {'error': 'todoを取得できません'},
                 status=HTTP_404_NOT_FOUND
             )
-        serializer = GetTodoListSerializer(todo)
+        serializer = GetTodoSerializer(todo)
         return Response(serializer.data, status=HTTP_200_OK)
 
+
+# todo一覧取得
+class TodoListGetView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
+            todos = TodoList.objects.filter(user=request.user)
+        except TodoList.DoesNotExist:
+            return Response(
+                {'error': 'todoListを取得できません'},
+                status=HTTP_404_NOT_FOUND
+            )
+        data = []
+        for todo in todos:
+            serializer = GetTodoSerializer(todo)
+            data.append(serializer.data)
+
+        return Response(data, status=HTTP_200_OK)
 
 class TodoDeleteView(APIView):
     permission_classes = [IsAuthenticated]
@@ -91,4 +111,7 @@ class TodoDeleteView(APIView):
             )
 
         todo.delete()
-        return Response(status=HTTP_204_NO_CONTENT)
+        return Response(
+            {'message': '指定のtodoが削除されました。'},
+            status=HTTP_204_NO_CONTENT
+        )
